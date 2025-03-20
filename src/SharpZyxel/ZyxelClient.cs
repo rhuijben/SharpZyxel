@@ -50,7 +50,10 @@ public class ZyxelClient : IDisposable
             if (File.Exists(authFilePath))
             {
                 string jsonContent = File.ReadAllText(authFilePath);
-                var authData = JsonSerializer.Deserialize<AuthData>(jsonContent);
+                var authData = JsonSerializer.Deserialize<AuthData>(jsonContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
                 if (authData is { })
                 {
