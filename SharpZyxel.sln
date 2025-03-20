@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35103.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpZyxel", "SharpZyxel\SharpZyxel.csproj", "{602A6912-FFF4-4335-A5DB-36C696457BFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZyxelTests", "ZyxelTests\ZyxelTests.csproj", "{9444A30D-032A-41FD-BA1D-5DAD56878F76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zyx", "Zyx\Zyx.csproj", "{0524881B-77C0-4D51-ABDE-5BC4FA4E1C94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{602A6912-FFF4-4335-A5DB-36C696457BFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{602A6912-FFF4-4335-A5DB-36C696457BFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{602A6912-FFF4-4335-A5DB-36C696457BFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{602A6912-FFF4-4335-A5DB-36C696457BFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9444A30D-032A-41FD-BA1D-5DAD56878F76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9444A30D-032A-41FD-BA1D-5DAD56878F76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9444A30D-032A-41FD-BA1D-5DAD56878F76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9444A30D-032A-41FD-BA1D-5DAD56878F76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0524881B-77C0-4D51-ABDE-5BC4FA4E1C94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0524881B-77C0-4D51-ABDE-5BC4FA4E1C94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0524881B-77C0-4D51-ABDE-5BC4FA4E1C94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0524881B-77C0-4D51-ABDE-5BC4FA4E1C94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FED79812-772A-423A-9C9C-9F2CBBAD7C95}
+	EndGlobalSection
+EndGlobal
