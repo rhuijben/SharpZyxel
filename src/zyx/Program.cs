@@ -44,7 +44,7 @@ internal class Program
             Console.Write((lh.curHostName?.TrimToNull() ?? lh.HostName?.TrimToNull() ?? lh.DeviceName?.TrimToNull() ?? "").PadRight(20));
             Console.Write(" ");
 
-            Console.Write((lh.PhysAddress ?? "").PadRight(17));
+            Console.Write((lh.PhysAddress?.ToUpperInvariant() ?? "").PadRight(17));
             Console.Write(" ");
 
             Console.Write((lh.X_ZYXEL_Neighbor.Translate(HostTable)?.TrimToNull() ?? "").PadRight(12));
