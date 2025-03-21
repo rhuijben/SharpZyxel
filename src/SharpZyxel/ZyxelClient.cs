@@ -1,6 +1,7 @@
 ﻿using AmpScm.Buckets.Cryptography;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
@@ -17,20 +18,42 @@ public class ZyxelClient : IDisposable
     string? _sessionKey;
     string? _loginLevel;
     string? _cookie;
-    Uri _uri;
-    string _username = "admin";
-    string _password;
 
-    public Uri Uri { get => _uri; init => _uri = value; }
-    public string Username { get; init; }
-    public string Password { get; init; }
+    public required Uri Uri { get; init; }
+    public required string Username { get; init; }
+    public required string Password { get; init; }
     public IHttpClientFactory? HttpClientFactory { get; init; }
     public string? HttpClientName { get; init; }
 
-    static readonly JsonSerializerOptions _jsOptions = new JsonSerializerOptions()
+    static readonly JsonSerializerOptions _jsOptions = new()
     {
-        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        AllowTrailingCommas = true,
+        PropertyNameCaseInsensitive = true,
     };
+
+    public ZyxelClient()
+    {
+
+    }
+
+    [SetsRequiredMembers]
+    public ZyxelClient(bool loadConfig) : this()
+    {
+        GC.KeepAlive(loadConfig);
+        string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        string authFilePath = Path.Combine(homeDirectory, ".zyxelauth.json");
+
+        if (!File.Exists(authFilePath))
+            throw new FileNotFoundException($"Authorization settings not found in {authFilePath}");
+
+        string jsonContent = File.ReadAllText(authFilePath);
+        var authData = JsonSerializer.Deserialize<AuthData>(jsonContent, _jsOptions)!;
+
+        Username = authData.Username ?? throw new InvalidOperationException("Username not set");
+        Password = authData.Password ?? throw new InvalidOperationException("Password not set");
+        Uri = new Uri(authData.Uri ?? throw new InvalidOperationException("Uri not set"));
+    }
 
     public bool IsAuthorized => _aesKey != null && !string.IsNullOrEmpty(_sessionKey) && !string.IsNullOrEmpty(_cookie);
 
@@ -38,31 +61,6 @@ public class ZyxelClient : IDisposable
     {
         if (IsAuthorized)
             return;
-
-        string Username = this.Username;
-        string Password = this.Password;
-
-        if (string.IsNullOrWhiteSpace(Password))
-        {
-            string homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string authFilePath = Path.Combine(homeDirectory, ".zyxelauth.json");
-
-            if (File.Exists(authFilePath))
-            {
-                string jsonContent = File.ReadAllText(authFilePath);
-                var authData = JsonSerializer.Deserialize<AuthData>(jsonContent, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                if (authData is { })
-                {
-                    Username = authData.Username;
-                    Password = authData.Password;
-                    _uri ??= new Uri(authData.Uri);
-                }
-            }
-        }
 
         if (_client == null)
         {
@@ -94,9 +92,11 @@ public class ZyxelClient : IDisposable
         {
             var pkValues = publicKey.GetValues();
             using var rsa = RSA.Create();
-            var rsaParams = new RSAParameters();
-            rsaParams.Modulus = pkValues[0].ToByteArray(true, true);
-            rsaParams.Exponent = pkValues[1].ToByteArray(true, true);
+            var rsaParams = new RSAParameters
+            {
+                Modulus = pkValues[0].ToByteArray(true, true),
+                Exponent = pkValues[1].ToByteArray(true, true)
+            };
             rsa.KeySize = rsaParams.Modulus.Length * 8;
 
             rsa.ImportParameters(rsaParams);
@@ -157,9 +157,9 @@ public class ZyxelClient : IDisposable
         }
     }
 
-    private HttpMessageHandler CreateHandler()
+    private HttpClientHandler CreateHandler()
     {
-        HttpClientHandler handler = new HttpClientHandler();
+        var handler = new HttpClientHandler();
         handler.ServerCertificateCustomValidationCallback = (x, y, z, p) =>
         {
             return true;
@@ -170,7 +170,7 @@ public class ZyxelClient : IDisposable
 
     public async ValueTask<JsonDocument> ApiCallAsync(string path, CancellationToken cancellationToken = default)
     {
-        await ConnectAsync();
+        await ConnectAsync(cancellationToken);
 
         var r = await _client.GetAsync(path, cancellationToken);
 
@@ -199,7 +199,7 @@ public class ZyxelClient : IDisposable
         aes.Key = _aesKey!;
         var resultData = aes.DecryptCbc(Convert.FromBase64String(wrapped!.content!), Convert.FromBase64String(wrapped.iv!).Take(16).ToArray());
 
-        var result = JsonSerializer.Deserialize<ApiResult<TResult>>(resultData, JsonSerializerOptions.Default);
+        var result = JsonSerializer.Deserialize<ApiResult<TResult>>(resultData, _jsOptions);
 
         if (result?.result is "ZCFG_SUCCESS")
             return result.Object!;
@@ -211,15 +211,19 @@ public class ZyxelClient : IDisposable
 
     public async Task<IEnumerable<LanHost>> GetLanHostsAsync(CancellationToken cancellationToken = default)
     {
-        var doc = await ApiCallAsync<LanHostsResult[]>("/cgi-bin/DAL?oid=lanhosts");
+        var doc = await ApiCallAsync<LanHostsResult[]>("/cgi-bin/DAL?oid=lanhosts", cancellationToken);
 
+#if DEBUG
         Debug.WriteLine(JsonSerializer.Serialize(doc, new JsonSerializerOptions()
         {
             WriteIndented = true
         }));
+#endif
 
         return doc.SelectMany(x => x.lanhosts);
     }
+
+#pragma warning disable IDE1006 // Naming Styles
 
     private record LanHostsResult : ReportAdditionalItems
     {

@@ -31,8 +31,7 @@ internal class Program
 
     private static async Task ListAsync(string[] args)
     {
-        using var zx = new ZyxelClient();
-
+        using var zx = new ZyxelClient(true);
 
         foreach (var lh in (await zx.GetLanHostsAsync())
             .Where(x => x.Active == true)

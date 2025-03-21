@@ -19,8 +19,6 @@ public class UnitTest1
     [TestMethod]
     public void TestMethod1()
     {
-        var key = new byte[256 / 8];
-
         var doc = System.Text.Json.JsonDocument.Parse(json);
 
         var content = doc.RootElement.GetProperty("content").GetString();
@@ -45,7 +43,7 @@ public class UnitTest1
     [TestMethod]
     public async Task ConnectToZyxel()
     {
-        using var zx = new ZyxelClient();
+        using var zx = new ZyxelClient(true);
 
         await zx.ConnectAsync();
 
@@ -62,7 +60,7 @@ public class UnitTest1
     [TestMethod]
     public async Task GetLanHosts()
     {
-        using var zx = new ZyxelClient();
+        using var zx = new ZyxelClient(true);
 
         await zx.ConnectAsync();
 
