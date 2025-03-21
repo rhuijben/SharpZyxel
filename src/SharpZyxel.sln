@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpZyxel", "SharpZyxel\Sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZyxelTests", "ZyxelTests\ZyxelTests.csproj", "{9444A30D-032A-41FD-BA1D-5DAD56878F76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zyx", "Zyx\Zyx.csproj", "{0524881B-77C0-4D51-ABDE-5BC4FA4E1C94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zyx", "zyx\zyx.csproj", "{0524881B-77C0-4D51-ABDE-5BC4FA4E1C94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
